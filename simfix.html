@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SimFix — Sims 4 Mod Helper</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ── RESET ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --cream:     #fdf8f2;
+  --warm-white:#fff9f4;
+  --blush:     #f5e6e0;
+  --blush2:    #eeddd5;
+  --sage:      #d4e8d8;
+  --sage2:     #b8d9be;
+  --plum:      #c084c8;
+  --plum2:     #a855b5;
+  --plum-soft: #f3e8f5;
+  --teal:      #5bbfb5;
+  --teal-soft: #e0f5f3;
+  --coral:     #f07a72;
+  --coral-soft:#fde8e7;
+  --gold:      #e8a830;
+  --gold-soft: #fef3dc;
+  --text:      #2d2420;
+  --text2:     #6b5c56;
+  --text3:     #a8998f;
+  --border:    rgba(45,36,32,0.1);
+  --border2:   rgba(45,36,32,0.16);
+  --shadow:    0 2px 16px rgba(192,132,200,0.12);
+  --shadow-lg: 0 8px 40px rgba(192,132,200,0.18);
+  --serif:     'Fraunces', Georgia, serif;
+  --sans:      'Nunito', sans-serif;
+  --radius:    14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+}
+
+html { font-size: 16px; scroll-behavior: smooth; }
+
+body {
+  background: var(--cream);
+  color: var(--text);
+  font-family: var(--sans);
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ── BACKGROUND DECORATION ── */
+body::before {
+  content: '';
+  position: fixed;
+  top: -200px; right: -200px;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(192,132,200,0.12) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+body::after {
+  content: '';
+  position: fixed;
+  bottom: -150px; left: -150px;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(91,191,181,0.1) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── LAYOUT ── */
+.app {
+  position: relative;
+  z-index: 1;
+  max-width: 740px;
+  margin: 0 auto;
+  padding: 0 20px 80px;
+}
+
+/* ── HEADER ── */
+header {
+  padding: 48px 0 0;
+  margin-bottom: 36px;
+  animation: fadeDown 0.6s ease both;
+}
+
+.header-inner {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* Plumbob diamond shape */
+.plumbob {
+  width: 40px;
+  height: 40px;
+  position: relative;
+  flex-shrink: 0;
+  animation: float 3s ease-in-out infinite;
+}
+.plumbob svg {
+  width: 40px;
+  height: 40px;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.brand-text h1 {
+  font-family: var(--serif);
+  font-size: 26px;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1;
+  letter-spacing: -0.3px;
+}
+.brand-text h1 em {
+  font-style: italic;
+  color: var(--plum2);
+}
+.brand-text p {
+  font-size: 13px;
+  color: var(--text3);
+  margin-top: 5px;
+  font-weight: 500;
+}
+
+/* ── USAGE WIDGET ── */
+.usage-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 7px 14px 7px 10px;
+  box-shadow: var(--shadow);
+  flex-shrink: 0;
+}
+.pips { display: flex; gap: 4px; }
+.pip {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--blush2);
+  transition: background 0.3s;
+}
+.pip.used { background: var(--plum); }
+.pip.pro  { background: var(--teal); }
+.usage-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text2);
+}
+
+/* ── PATCH ALERT BANNER ── */
+.patch-alert {
+  background: var(--gold-soft);
+  border: 1px solid rgba(232,168,48,0.3);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  font-size: 13px;
+  color: #7a5800;
+  font-weight: 500;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 20px;
+  animation: fadeDown 0.6s 0.1s ease both;
+}
+.patch-alert-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--gold);
+  flex-shrink: 0;
+  margin-top: 3px;
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.3); }
+}
+
+/* ── CARDS ── */
+.card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 28px;
+  box-shadow: var(--shadow);
+  margin-bottom: 16px;
+  animation: fadeUp 0.5s ease both;
+}
+.card:nth-child(1) { animation-delay: 0.1s; }
+.card:nth-child(2) { animation-delay: 0.2s; }
+.card:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── SECTION LABELS ── */
+.field-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--text3);
+  margin-bottom: 10px;
+  display: block;
+}
+
+/* ── GAME SELECTOR — pill tabs ── */
+.game-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 0;
+}
+.game-pill {
+  padding: 7px 16px;
+  border-radius: 999px;
+  border: 1.5px solid var(--border2);
+  background: transparent;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text2);
+  cursor: pointer;
+  transition: all 0.18s;
+}
+.game-pill:hover {
+  border-color: var(--plum);
+  color: var(--plum2);
+  background: var(--plum-soft);
+}
+.game-pill.active {
+  background: var(--plum2);
+  border-color: var(--plum2);
+  color: white;
+  box-shadow: 0 2px 10px rgba(168,85,181,0.25);
+}
+.game-pill.featured {
+  border-color: var(--plum);
+  color: var(--plum2);
+  background: var(--plum-soft);
+}
+.game-pill.featured.active {
+  background: var(--plum2);
+  color: white;
+}
+
+/* ── TEXTAREAS ── */
+textarea {
+  width: 100%;
+  background: var(--cream);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 500;
+  padding: 14px 16px;
+  resize: vertical;
+  line-height: 1.65;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+textarea:focus {
+  border-color: var(--plum);
+  background: white;
+  box-shadow: 0 0 0 3px rgba(192,132,200,0.15);
+}
+textarea#modList {
+  min-height: 180px;
+  font-size: 13px;
+  line-height: 1.75;
+}
+textarea#question {
+  min-height: 88px;
+}
+.field-hint {
+  font-size: 12px;
+  color: var(--text3);
+  margin-top: 7px;
+  font-weight: 500;
+}
+
+/* ── DIVIDER ── */
+.field-gap { margin-bottom: 22px; }
+
+/* ── ANALYZE BUTTON ── */
+.btn-wrap {
+  margin-top: 4px;
+}
+.btn-analyze {
+  width: 100%;
+  padding: 16px 28px;
+  background: var(--plum2);
+  border: none;
+  border-radius: var(--radius);
+  color: white;
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.12s, box-shadow 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 4px 20px rgba(168,85,181,0.3);
+  letter-spacing: 0.01em;
+}
+.btn-analyze:hover:not(:disabled) {
+  background: var(--plum);
+  box-shadow: 0 6px 28px rgba(168,85,181,0.4);
+  transform: translateY(-1px);
+}
+.btn-analyze:active:not(:disabled) {
+  transform: translateY(0);
+}
+.btn-analyze:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* ── SPINNER ── */
+.spinner {
+  width: 17px; height: 17px;
+  border: 2.5px solid rgba(255,255,255,0.35);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.65s linear infinite;
+  display: none; flex-shrink: 0;
+}
+.spinner.active { display: block; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── KEYBOARD HINT ── */
+.kb-hint {
+  text-align: center;
+  font-size: 12px;
+  color: var(--text3);
+  margin-top: 10px;
+  font-weight: 500;
+}
+
+/* ── UPGRADE BANNER ── */
+.upgrade-banner {
+  display: none;
+  background: var(--plum-soft);
+  border: 1px solid rgba(192,132,200,0.3);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--plum2);
+  margin-bottom: 16px;
+  line-height: 1.6;
+}
+.upgrade-banner.visible { display: block; }
+
+/* ── ERROR ── */
+.error-box {
+  display: none;
+  background: var(--coral-soft);
+  border: 1px solid rgba(240,122,114,0.3);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #9a2f2a;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+.error-box.visible { display: block; }
+
+/* ── DEV NOTE ── */
+.dev-note {
+  background: var(--gold-soft);
+  border: 1px solid rgba(232,168,48,0.25);
+  border-radius: var(--radius);
+  padding: 13px 16px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #7a5800;
+  margin-bottom: 18px;
+  line-height: 1.6;
+}
+
+/* ── RESULTS ── */
+.results {
+  display: none;
+  margin-top: 8px;
+}
+.results.visible { display: block; animation: fadeUp 0.4s ease both; }
+
+.results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.results-title {
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 500;
+  font-style: italic;
+  color: var(--text);
+}
+.results-meta {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text3);
+}
+
+/* ── RESULT SECTIONS ── */
+.result-sections { display: flex; flex-direction: column; gap: 12px; }
+
+.result-section {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.section-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 18px;
+  border-bottom: 1px solid var(--border);
+}
+.section-icon {
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.icon-conflict { background: var(--coral-soft); }
+.icon-broken   { background: var(--gold-soft); }
+.icon-steps    { background: var(--teal-soft); }
+.icon-good     { background: var(--sage); }
+
+.section-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text2);
+}
+
+.section-body {
+  padding: 16px 18px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.75;
+  color: var(--text);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ── ALL CLEAR STATE ── */
+.all-clear {
+  background: var(--sage);
+  border: 1px solid var(--sage2);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  text-align: center;
+}
+.all-clear-title {
+  font-family: var(--serif);
+  font-size: 20px;
+  font-weight: 500;
+  font-style: italic;
+  color: #1a5c2a;
+  margin-bottom: 6px;
+}
+.all-clear-sub {
+  font-size: 13px;
+  font-weight: 600;
+  color: #2d7a42;
+}
+
+/* ── PRO INDICATOR ── */
+.pro-indicator {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  background: var(--teal-soft);
+  border: 1px solid rgba(91,191,181,0.3);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--teal);
+  margin-bottom: 16px;
+}
+.pro-indicator.visible { display: flex; }
+.pro-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--teal); }
+
+/* ── HOW IT WORKS ── */
+.how-it-works {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 28px;
+  animation: fadeUp 0.5s 0.4s ease both;
+}
+.hiw-item {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px 16px;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+.hiw-num {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: var(--plum-soft);
+  color: var(--plum2);
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 10px;
+}
+.hiw-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.hiw-desc {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text3);
+  line-height: 1.5;
+}
+
+/* ── FOOTER ── */
+footer {
+  margin-top: 56px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text3);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 560px) {
+  .how-it-works { grid-template-columns: 1fr; }
+  .header-inner { flex-direction: column; }
+  .card { padding: 20px; }
+  .brand-text h1 { font-size: 22px; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-inner">
+      <div class="brand">
+        <div class="plumbob">
+          <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="20,2 38,18 20,38 2,18" fill="#c084c8" opacity="0.9"/>
+            <polygon points="20,2 38,18 20,22" fill="#a855b5" opacity="0.95"/>
+            <polygon points="20,2 2,18 20,22" fill="#d8a8e0" opacity="0.85"/>
+            <polygon points="2,18 20,38 20,22" fill="#a855b5" opacity="0.7"/>
+            <polygon points="38,18 20,38 20,22" fill="#8b3fa0" opacity="0.8"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>Sim<em>Fix</em></h1>
+          <p>AI mod helper for The Sims 4</p>
+        </div>
+      </div>
+      <div class="usage-pill" id="usagePill">
+        <div class="pips" id="pips"></div>
+        <span class="usage-label" id="usageLabel">5 left today</span>
+      </div>
+    </div>
+
+    <!-- Patch alert — shows on patch weeks -->
+    <div class="patch-alert" id="patchAlert" style="display:none">
+      <div class="patch-alert-dot"></div>
+      <span>EA recently released a patch — some script mods may be broken. SimFix can help you identify which ones need updating.</span>
+    </div>
+  </header>
+
+  <!-- PRO INDICATOR -->
+  <div class="pro-indicator" id="proIndicator">
+    <div class="pro-dot"></div>
+    Pro — unlimited analyses
+  </div>
+
+  <!-- UPGRADE BANNER -->
+  <div class="upgrade-banner" id="upgradeBanner">
+    You've used all 5 free analyses for today! Upgrade to SimFix Pro ($5/mo) for unlimited help, saved mod lists, and priority support. Resets at midnight. ✨
+  </div>
+
+  <!-- ERROR -->
+  <div class="error-box" id="errorBox"></div>
+
+  <!-- MAIN FORM CARD -->
+  <div class="card">
+
+    <div class="field-gap">
+      <span class="field-label">Which game?</span>
+      <div class="game-pills" id="gamePills">
+        <button class="game-pill featured active" data-game="The Sims 4">The Sims 4 ✦</button>
+        <button class="game-pill" data-game="Skyrim Special Edition">Skyrim SE</button>
+        <button class="game-pill" data-game="Fallout 4">Fallout 4</button>
+        <button class="game-pill" data-game="Stardew Valley">Stardew Valley</button>
+        <button class="game-pill" data-game="RimWorld">RimWorld</button>
+        <button class="game-pill" data-game="Fallout New Vegas">Fallout NV</button>
+        <button class="game-pill" data-game="Other">Other</button>
+      </div>
+    </div>
+
+    <div class="field-gap">
+      <span class="field-label">Your mod list</span>
+      <textarea id="modList" placeholder="Paste your mod list here — one mod per line.
+
+You can copy from:
+  • Mod Manager (right-click → Export list)
+  • Sims 4 Tray Importer
+  • Your mods folder file names
+  • Or just type the names you remember
+
+Don't worry about perfect formatting!"></textarea>
+      <div class="field-hint">Include version numbers or creator names if you have them — it helps.</div>
+    </div>
+
+    <div class="field-gap" style="margin-bottom:0">
+      <span class="field-label">What's going wrong?</span>
+      <textarea id="question" placeholder="Describe your problem or question, for example:
+• My game crashes right after loading a save
+• CAS looks broken after the latest patch
+• I think two mods might be conflicting
+• Which of these mods need to be updated?"></textarea>
+    </div>
+
+  </div>
+
+  <!-- ANALYZE BUTTON -->
+  <div class="btn-wrap">
+    <button class="btn-analyze" id="analyzeBtn" onclick="runAnalysis()">
+      <div class="spinner" id="spinner"></div>
+      <span id="btnLabel">Analyze my mods ✦</span>
+    </button>
+    <div class="kb-hint">Ctrl + Enter to submit</div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="results" id="results">
+    <div class="results-header">
+      <div class="results-title">Here's what I found</div>
+      <div class="results-meta" id="resultsMeta"></div>
+    </div>
+    <div class="result-sections" id="resultSections"></div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="how-it-works" id="howItWorks">
+    <div class="hiw-item">
+      <div class="hiw-num">1</div>
+      <div class="hiw-title">Paste your mods</div>
+      <div class="hiw-desc">Copy your mod list from any manager or just type what you have.</div>
+    </div>
+    <div class="hiw-item">
+      <div class="hiw-num">2</div>
+      <div class="hiw-title">Describe the issue</div>
+      <div class="hiw-desc">Tell us what's broken, crashing, or acting weird in plain English.</div>
+    </div>
+    <div class="hiw-item">
+      <div class="hiw-num">3</div>
+      <div class="hiw-title">Get clear answers</div>
+      <div class="hiw-desc">No jargon. Just what's conflicting and exactly what to do about it.</div>
+    </div>
+  </div>
+
+  <footer>
+    <span>SimFix v1.0 — not affiliated with EA or Maxis</span>
+    <span>Powered by Claude AI</span>
+  </footer>
+
+</div>
+
+<script>
+// ─────────────────────────────────────────
+// CONFIG — replace your key here
+// ─────────────────────────────────────────
+const API_KEY     = 'YOUR_API_KEY_HERE';
+const IS_PRO      = false;
+const FREE_LIMIT  = 5;
+
+// ─────────────────────────────────────────
+// SELECTED GAME STATE
+// ─────────────────────────────────────────
+let selectedGame = 'The Sims 4';
+
+document.querySelectorAll('.game-pill').forEach(pill => {
+  pill.addEventListener('click', () => {
+    document.querySelectorAll('.game-pill').forEach(p => p.classList.remove('active'));
+    pill.classList.add('active');
+    selectedGame = pill.dataset.game;
+  });
+});
+
+// ─────────────────────────────────────────
+// SYSTEM PROMPT
+// ─────────────────────────────────────────
+const SYSTEM_PROMPT = `You are SimFix, a warm and knowledgeable mod assistant for The Sims 4 (and other games). You understand how The Sims 4 mod system works in depth — including script mods (.py/.ts4script), tuning mods (.package files), CC (custom content), how EA patches break mods, how core mods conflict, how overrides work, and common culprits like MCCC, WickedWhims, UI Cheats Extension, and Better Exceptions.
+
+You are also knowledgeable about Skyrim SE/LE, Fallout 4, Fallout New Vegas, Stardew Valley, and RimWorld modding if those games are specified.
+
+The player has given you their mod list and described their problem. Respond ONLY in the following exact format with no text outside these section tags:
+
+[BROKEN_OR_OUTDATED]
+List any mods that are likely broken due to a recent EA patch or known to conflict with the current game version. Name the mod and explain the likely issue briefly. If none are identified, write: "No obviously outdated mods spotted — but check each mod creator's page to confirm they've updated for the latest patch."
+
+[CONFLICTS]
+Identify any mods that are known to conflict with each other. Be specific — name both mods and explain why they conflict (same tuning file, same CAS resource, competing script, etc.). If no conflicts are found, write: "No known conflicts detected between these mods."
+
+[WHAT_TO_DO]
+Give exactly 3 to 5 clear, numbered action steps the player should take RIGHT NOW to fix their issue. Be direct and friendly — no jargon, no vague advice. Write as if you're helping a friend.
+
+[GOOD_NEWS]
+End with one short encouraging sentence. Keep it warm and brief — this is a Sims community, people are here to have fun.
+
+---
+Game: {GAME}
+
+Mod list:
+{MOD_LIST}
+
+Player's problem: {QUESTION}`;
+
+// ─────────────────────────────────────────
+// USAGE TRACKING
+// ─────────────────────────────────────────
+function getUsage() {
+  if (IS_PRO) return 0;
+  try {
+    const d = JSON.parse(localStorage.getItem('simfix_usage') || '{}');
+    return d.date === new Date().toDateString() ? (d.count || 0) : 0;
+  } catch { return 0; }
+}
+
+function bumpUsage() {
+  if (IS_PRO) return;
+  try {
+    localStorage.setItem('simfix_usage', JSON.stringify({
+      date: new Date().toDateString(),
+      count: getUsage() + 1
+    }));
+  } catch {}
+}
+
+function remaining() {
+  return IS_PRO ? Infinity : Math.max(0, FREE_LIMIT - getUsage());
+}
+
+// ─────────────────────────────────────────
+// UI STATE
+// ─────────────────────────────────────────
+function refreshUI() {
+  const used = getUsage();
+  const rem  = remaining();
+  const pips = document.getElementById('pips');
+  const lbl  = document.getElementById('usageLabel');
+  const btn  = document.getElementById('analyzeBtn');
+  const btnLbl = document.getElementById('btnLabel');
+  const banner = document.getElementById('upgradeBanner');
+  const pro    = document.getElementById('proIndicator');
+
+  if (IS_PRO) {
+    pips.innerHTML = '<div class="pip pro"></div>';
+    lbl.textContent = 'Pro — unlimited';
+    pro.classList.add('visible');
+    banner.classList.remove('visible');
+    btn.disabled = false;
+    btnLbl.textContent = 'Analyze my mods ✦';
+    return;
+  }
+
+  pips.innerHTML = Array.from({length: FREE_LIMIT}, (_, i) =>
+    `<div class="pip${i < used ? ' used' : ''}"></div>`
+  ).join('');
+
+  if (rem === 0) {
+    lbl.textContent = 'Limit reached';
+    banner.classList.add('visible');
+    btn.disabled = true;
+    btnLbl.textContent = 'Daily limit reached';
+  } else {
+    lbl.textContent = `${rem} left today`;
+    banner.classList.remove('visible');
+    btn.disabled = false;
+    btnLbl.textContent = 'Analyze my mods ✦';
+  }
+}
+
+function setLoading(on) {
+  document.getElementById('analyzeBtn').disabled = on;
+  document.getElementById('spinner').classList.toggle('active', on);
+  document.getElementById('btnLabel').textContent = on ? 'Analyzing...' : 'Analyze my mods ✦';
+}
+
+function showError(msg) {
+  const el = document.getElementById('errorBox');
+  el.textContent = msg;
+  el.classList.add('visible');
+  setTimeout(() => el.classList.remove('visible'), 9000);
+}
+
+// ─────────────────────────────────────────
+// PARSE RESPONSE
+// ─────────────────────────────────────────
+const SECTIONS = [
+  { key: 'BROKEN_OR_OUTDATED', label: 'Broken or outdated mods',  iconClass: 'icon-broken',   icon: '⚠' },
+  { key: 'CONFLICTS',          label: 'Conflicts detected',        iconClass: 'icon-conflict',  icon: '⚡' },
+  { key: 'WHAT_TO_DO',         label: 'What to do right now',      iconClass: 'icon-steps',     icon: '✓' },
+  { key: 'GOOD_NEWS',          label: 'Good news',                 iconClass: 'icon-good',      icon: '✦' },
+];
+
+function parse(text) {
+  const out = [];
+  for (const s of SECTIONS) {
+    const tag   = `[${s.key}]`;
+    const start = text.indexOf(tag);
+    if (start === -1) continue;
+    let end = text.length;
+    for (const o of SECTIONS) {
+      if (o.key === s.key) continue;
+      const idx = text.indexOf(`[${o.key}]`, start + 1);
+      if (idx !== -1 && idx < end) end = idx;
+    }
+    const body = text.slice(start + tag.length, end).trim();
+    if (body) out.push({ ...s, body });
+  }
+  return out;
+}
+
+function esc(str) {
+  return str
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+
+// ─────────────────────────────────────────
+// RENDER RESULTS
+// ─────────────────────────────────────────
+function renderResults(text, game, elapsed) {
+  const sections   = parse(text);
+  const container  = document.getElementById('resultSections');
+  const resultsEl  = document.getElementById('results');
+  const metaEl     = document.getElementById('resultsMeta');
+  const howEl      = document.getElementById('howItWorks');
+
+  metaEl.textContent = `${game} · ${elapsed}s`;
+  howEl.style.display = 'none';
+
+  if (sections.length === 0) {
+    container.innerHTML = `<div class="all-clear">
+      <div class="all-clear-title">Looking good! ✦</div>
+      <div class="all-clear-sub">No obvious issues found. Here's the full response:</div>
+      <div style="margin-top:12px;font-size:14px;font-weight:500;text-align:left;white-space:pre-wrap;color:var(--text)">${esc(text)}</div>
+    </div>`;
+  } else {
+    // Check if all clear (no conflicts & no broken)
+    const hasIssues = sections.some(s =>
+      (s.key === 'CONFLICTS' || s.key === 'BROKEN_OR_OUTDATED') &&
+      !s.body.toLowerCase().includes('no obvious') &&
+      !s.body.toLowerCase().includes('no known')
+    );
+
+    if (!hasIssues && sections.length > 0) {
+      container.innerHTML = `<div class="all-clear" style="margin-bottom:12px">
+        <div class="all-clear-title">Your mods look clean! ✦</div>
+        <div class="all-clear-sub">No conflicts or broken mods detected in this list.</div>
+      </div>` + sections.map(s => sectionHTML(s)).join('');
+    } else {
+      container.innerHTML = sections.map(s => sectionHTML(s)).join('');
+    }
+  }
+
+  resultsEl.classList.add('visible');
+  setTimeout(() => resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
+}
+
+function sectionHTML(s) {
+  return `<div class="result-section">
+    <div class="section-head">
+      <div class="section-icon ${s.iconClass}">${s.icon}</div>
+      <div class="section-label">${s.label}</div>
+    </div>
+    <div class="section-body">${esc(s.body)}</div>
+  </div>`;
+}
+
+// ─────────────────────────────────────────
+// MAIN ANALYSIS
+// ─────────────────────────────────────────
+async function runAnalysis() {
+  document.getElementById('errorBox').classList.remove('visible');
+
+  if (remaining() === 0 && !IS_PRO) {
+    showError('Daily limit reached. Come back tomorrow or upgrade to Pro for unlimited analyses!');
+    return;
+  }
+
+  if (API_KEY === 'YOUR_API_KEY_HERE') {
+    showError('Almost there! Open this file in a text editor and replace YOUR_API_KEY_HERE with your Anthropic API key from console.anthropic.com');
+    return;
+  }
+
+  const modList  = document.getElementById('modList').value.trim();
+  const question = document.getElementById('question').value.trim();
+
+  if (!modList) {
+    showError('Please paste your mod list first — even just a few mod names is helpful!');
+    return;
+  }
+  if (!question) {
+    showError("Please describe what's going wrong so I can help you better.");
+    return;
+  }
+
+  setLoading(true);
+  document.getElementById('results').classList.remove('visible');
+  document.getElementById('howItWorks').style.display = 'none';
+
+  const prompt = SYSTEM_PROMPT
+    .replace('{GAME}',     selectedGame)
+    .replace('{MOD_LIST}', modList)
+    .replace('{QUESTION}', question);
+
+  const t0 = Date.now();
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': API_KEY,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-5',
+        max_tokens: 1500,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err?.error?.message || `API error ${res.status}`);
+    }
+
+    const data    = await res.json();
+    const text    = data?.content?.[0]?.text || '';
+    const elapsed = ((Date.now() - t0) / 1000).toFixed(1);
+
+    if (!text) throw new Error('Empty response — please try again.');
+
+    bumpUsage();
+    refreshUI();
+    renderResults(text, selectedGame, elapsed);
+
+  } catch (err) {
+    let msg = err.message || 'Something went wrong — please try again.';
+    if (msg.includes('fetch') || msg.includes('Network')) {
+      msg = 'Network error — check your connection and API key.';
+    }
+    showError('Oops: ' + msg);
+    document.getElementById('howItWorks').style.display = '';
+  } finally {
+    setLoading(false);
+  }
+}
+
+// Ctrl/Cmd + Enter submits
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+    const btn = document.getElementById('analyzeBtn');
+    if (!btn.disabled) runAnalysis();
+  }
+});
+
+// ─────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────
+refreshUI();
+
+// Show patch alert occasionally (simulate patch week awareness)
+// In production you'd check a real date — for now show it to demonstrate
+// document.getElementById('patchAlert').style.display = 'flex';
+</script>
+</body>
+</html>
