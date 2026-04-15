@@ -727,7 +727,7 @@ Don't worry about perfect formatting!"></textarea>
 // ─────────────────────────────────────────
 // CONFIG — replace your key here
 // ─────────────────────────────────────────
-const API_KEY     = 'YOUR_API_KEY_HERE';
+const API_KEY     = 'https://simfix-proxy.zcliffy123.workers.dev';
 const IS_PRO      = false;
 const FREE_LIMIT  = 5;
 
@@ -978,14 +978,11 @@ async function runAnalysis() {
   const t0 = Date.now();
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': API_KEY,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
+    const res = await fetch(PROXY_URL, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
       body: JSON.stringify({
         model: 'claude-sonnet-4-5',
         max_tokens: 1500,
